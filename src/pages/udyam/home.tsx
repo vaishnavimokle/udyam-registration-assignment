@@ -87,18 +87,16 @@ const HomePage = () => {
 
   return (
     <ScreenLayout title="Udyam Registration Initiate Session">
-      <div className="w-full flex flex-col justify-around pt-10 md:pt-20">
-        <div className="flex flex-col gap-6 items-center">
-          <div className="max-w-sm flex flex-col gap-4">
-            <Checkbox
-              label="I want to use simulation."
-              checked={isSimulation}
-              onChange={(event) => setIsSimulation(event.currentTarget.checked)}
-            />
-            <Button onClick={onInitiate} loading={loading}>
-              Initiate Udyam Registration
-            </Button>
-          </div>
+      <div className="h-full flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4 max-w-sm w-full">
+          <Button onClick={onInitiate} loading={loading} fullWidth>
+            Initiate Udyam Registration
+          </Button>
+          <Checkbox
+            label="I want to use simulation."
+            checked={isSimulation}
+            onChange={(event) => setIsSimulation(event.currentTarget.checked)}
+          />
         </div>
       </div>
     </ScreenLayout>
