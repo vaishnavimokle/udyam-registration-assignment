@@ -4,16 +4,14 @@ import { useForm } from "@mantine/form";
 import useAuthStore from "@/stores/useAuthStore";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import { APIUrl } from "@/constants/apiUrl";
 
 export default function Home() {
   const setAuthState = useAuthStore((state) => state.setAuthState);
-  const { apiUrl, clientId, clientSecret } = useAuthStore();
+  const { clientId, clientSecret } = useAuthStore();
   const router = useRouter();
 
   const form = useForm({
     initialValues: {
-      apiUrl: apiUrl,
       clientId: clientId,
       clientSecret: clientSecret,
     },
@@ -77,8 +75,7 @@ export default function Home() {
 
             <Button
               onClick={handleCredentialConfiguration}
-              type="button"
-              className="w-full"
+              fullWidth
             >
               Configure
             </Button>
