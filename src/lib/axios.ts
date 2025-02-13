@@ -4,13 +4,13 @@ import useAuthStore from "@/stores/useAuthStore";
 
 const defaultIntercepteor = (config: InternalAxiosRequestConfig) => {
   const authStore = useAuthStore.getState();
-  config.baseURL = authStore.apiUrl
   config.headers["client_id"] = authStore.clientId
   config.headers["client_secret"] = authStore.clientSecret;
   return config;
 };
 
 export const axios = Axios.create({
+  baseURL: "https://in.qa.decentro.tech",
   httpsAgent: new https.Agent({
     rejectUnauthorized: false,
   }),

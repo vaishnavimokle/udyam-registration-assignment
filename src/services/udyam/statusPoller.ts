@@ -10,7 +10,7 @@ const pollForStatus = async (
   const endTime = Date.now() + timeout * 1000;
   while (Date.now() < endTime) {
     const statusResponse = (await udyamRegistrationStatus());
-    console.log(`Current status: ${statusResponse.data}`);
+    console.log("Current status:", statusResponse.data);
     if (expectedStages.includes(statusResponse.data.status)) {
       return statusResponse;
     }

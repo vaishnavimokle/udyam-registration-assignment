@@ -1,6 +1,5 @@
-
-import { useState } from "react";
-import { PinInput, Button, Stack, Text } from "@mantine/core"; 
+import { useEffect, useState } from "react";
+import { PinInput, Button, Stack, Text, Input } from "@mantine/core";
 
 type OTPFormProps = {
   onSubmit: (otp: string) => void;
@@ -11,50 +10,45 @@ const OTPForm = ({ onSubmit, errorText }: OTPFormProps) => {
   const [otp, setOtp] = useState<string>("");
   const [errorString, setErrorString] = useState<string | undefined>(errorText);
 
-  const handleChange = (value: string) => {
-    setOtp(value);
-  };
+  useEffect(() => {setErrorString(errorText);}, [errorText]);
+
+  const [loading, setIsLoading] = useState(false);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    if (otp.length !== 6) {
-      setErrorString("OTP should be of length 6")
-    }
-    else if(!(/^[0-9]+$/.test(otp))){
-      setErrorString("OTP should only contain numbers")
-    } else {
-      setErrorString(undefined);
-      onSubmit(otp);
-    }
+    setErrorString(undefined);
+    setIsLoading(true)
+    onSubmit(otp);
+    setIsLoading(false);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-xs mx-auto">
-      <div className="flex flex-col items-center justify-center content-center  space-y-4">
-        <PinInput
-          type={"number"}
-          length={6}
-          value={otp}
-          onChange={handleChange}
-          error={errorString != null}
-          className=""
-        />
-
-        {errorString && (
-          <Text size="sm" className="text-red-500">
-            {errorString}
-          </Text>
-        )}
-
-        <Button
-          type="submit"
-          variant="filled"
-          className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 focus:outline-none"
+    <div className="w-full max-w-xs mx-auto">
+      <div className="flex flex-col items-center justify-center content-center  space-y-6">
+        <Input.Wrapper
+          label="OTP"
+          description="Enter the otp sent to your registered mobile"
+          error={errorString}
+          className="w-full"
         >
+          <PinInput
+            oneTimeCode
+            name="OTP"
+            inputMode="numeric"
+            type="number"
+            length={6}
+            error={errorString != undefined}
+            onChange={(otp) => setOtp(otp)}
+            value={otp}
+            gap="lg"
+          />
+        </Input.Wrapper>
+
+        <Button loading={loading} disabled={otp.length != 6} onClick={handleSubmit} fullWidth>
           Submit OTP
         </Button>
       </div>
-    </form>
+    </div>
   );
 };
 
