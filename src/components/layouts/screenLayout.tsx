@@ -1,7 +1,8 @@
 import logo from "@/../public/decentro-logo.svg";
 import Image from "next/image";
 import { Title } from "@mantine/core";
-import { ReactNode } from "react";
+import useAuthStore from "@/stores/useAuthStore";
+import { ReactNode, useEffect } from "react";
 import { TbArrowLeft } from "react-icons/tb";
 import { useRouter } from "next/router";
 import Head from "next/head";
@@ -20,6 +21,13 @@ const ScreenLayout = ({
   enableBackBtn = false,
 }: ScreenlayoutProps) => {
   const router = useRouter();
+  const { clientId, clientSecret } = useAuthStore();
+
+  useEffect(() => {
+    if (router.basePath !== "/" && (!clientId || !clientSecret )) {
+        router.push("/");
+    }
+  }, [clientId, clientSecret]);
 
   const handleBackBtnPress = () => {
     router.back();

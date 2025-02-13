@@ -3,10 +3,12 @@ import { Button, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import useAuthStore from "@/stores/useAuthStore";
 import { useEffect } from "react";
+import { useRouter } from "next/router";
 
 export default function Home() {
   const setAuthState = useAuthStore((state) => state.setAuthState);
   const { clientId, clientSecret } = useAuthStore();
+  const router = useRouter();
 
   const form = useForm({
     initialValues: {
@@ -31,9 +33,8 @@ export default function Home() {
   });
 
   useEffect(() => {
-    console.log(clientId, clientSecret)
     if (clientId && clientSecret) {
-      // redirect
+      router.push("/udyam/home");
     }
   }, [clientId, clientSecret]);
 
