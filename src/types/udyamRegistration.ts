@@ -8,7 +8,9 @@ export interface ErrorStatus{
     responseKey?: string;
 }
 
-export interface Data{}
+export interface InitiateSessionData{
+    sessionUrl: string;
+}
 
 interface UdyamAddressDetail {
     door: string;
