@@ -25,7 +25,7 @@ const ScreenLayout = ({
 
   useEffect(() => {
     if (router.basePath !== "/" && (!clientId || !clientSecret )) {
-        router.push("/");
+        // router.push("/");
     }
   }, [clientId, clientSecret]);
 

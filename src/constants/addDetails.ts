@@ -1,32 +1,32 @@
-enum SocialCategory {
-  GENERAL = "1",
-  SC = "2",
-  ST = "3",
-  OBC = "4",
+export enum SocialCategory {
+    GENERAL = "GENERAL",
+    SC = "SC",
+    ST = "ST",
+    OBC = "OBC",
 }
-
-enum Gender {
-  MALE = "1",
-  FEMALE = "2",
-  OTHERS = "3",
+  
+export enum Gender {
+    MALE = "MALE",
+    FEMALE = "FEMALE",
+    OTHERS = "OTHERS",
 }
-
-enum ActivityCategory {
-  MANUFACTURING = "1",
-  SERVICES = "2",
-  TRADING = "3",
+  
+export enum ActivityCategory {
+    MANUFACTURING = "MANUFACTURING",
+    SERVICES = "SERVICES",
+    TRADING = "TRADING",
 }
-
-enum TypeOfOrganisation {
-  CO_OPERATIVE = "4",
-  HINDU_UNDIVIDED_FAMILY = "2",
-  LIMITED_LIABILITY_PARTNERSHIP = "9",
-  OTHERS = "8",
-  PARTNERSHIP = "3",
-  PRIVATE_LIMITED_COMPANY = "5",
-  PROPRIETARY = "1",
-  PUBLIC_LIMITED_COMPANY = "6",
-  SELF_HELP_GROUP = "7",
-  SOCIETY = "10",
-  TRUST = "11",
+  
+export enum TypeOfOrganisation {
+    CO_OPERATIVE = "CO_OPERATIVE",
+    HINDU_UNDIVIDED_FAMILY = "HINDU_UNDIVIDED_FAMILY",
+    LIMITED_LIABILITY_PARTNERSHIP = "LIMITED_LIABILITY_PARTNERSHIP",
+    OTHERS = "OTHERS",
+    PARTNERSHIP = "PARTNERSHIP",
+    PRIVATE_LIMITED_COMPANY = "PRIVATE_LIMITED_COMPANY",
+    PROPRIETARY = "PROPRIETARY",
+    PUBLIC_LIMITED_COMPANY = "PUBLIC_LIMITED_COMPANY",
+    SELF_HELP_GROUP = "SELF_HELP_GROUP",
+    SOCIETY = "SOCIETY",
+    TRUST = "TRUST",
 }

@@ -1,4 +1,5 @@
 import { UdyamRegistrationStage } from "@/constants/udyam";
+import { ActivityCategory, Gender, SocialCategory, TypeOfOrganisation } from "@/constants/addDetails";
 
 export interface UdyamStatusResponse {
   decentroTxnId: string;
@@ -80,7 +81,7 @@ export interface UdyamRegistrationDetailRequest {
   socialCategory: SocialCategory;
   gender: Gender;
   speciallyAbled: boolean;
-  enterpiseName: string;
+  enterpriseName: string;
   units?: UdyamUnitDetail[];
   officialAddress: UdyamAddressDetail;
   enterpriseStatus: UdyamEnterpriseStatus;
