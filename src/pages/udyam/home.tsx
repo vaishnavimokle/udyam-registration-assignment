@@ -36,17 +36,30 @@ const HomePage = () => {
             UdyamRegistrationStage.SESSION_INITIATION_FAILED,
           ]);
           setBtnLoading(false);
-          if (
-            status?.data.status ==
-            UdyamRegistrationStage.SESSION_INITIATION_SUCCESSFUL
-          ) {
-            router.push({
-              pathname: "/udyam/otp",
-              query: {
-                type: OTPVerificationType.VERIFY_SESSION,
-                redirectUrl: "/udyam/addDetails",
-              },
-            });
+          if (status) {
+            if (
+              status?.data.status ==
+              UdyamRegistrationStage.SESSION_INITIATION_SUCCESSFUL
+            ) {
+              router.push({
+                pathname: "/udyam/otp",
+                query: {
+                  type: OTPVerificationType.VERIFY_SESSION,
+                  redirectUrl: "/udyam/addDetails",
+                },
+              });
+            } else {
+              router.push({
+                pathname: "/udyam/failure",
+                query: {
+                  message: status.data.error
+                    ? status.data.error.message
+                    : status.data.description,
+                },
+              });
+            }
+          } else {
+            console.log("Poller timed out");
           }
         }
       };
