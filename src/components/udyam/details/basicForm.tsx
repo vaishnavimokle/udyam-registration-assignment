@@ -5,7 +5,7 @@ import {
 } from "@/constants/addDetails";
 import { Button, TextInput, Select, Checkbox } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
-import { useForm } from "@mantine/form";
+import { isEmail, isNotEmpty, useForm } from "@mantine/form";
 
 type BasicDetailField = {
   pan: string;
@@ -58,12 +58,9 @@ const BasicDetailForm = ({
         }
         return null;
       },
-      email: (value) => {
-        if (!/^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/.test(value)) {
-          return "Invalid Email.";
-        }
-        return null;
-      },
+      nameOnPan: isNotEmpty("Required."),
+      dob: isNotEmpty("Required."),
+      email: isEmail("Invalid Email."),
       mobile: (value) => {
         if (!/^\d{10}$/.test(value)) {
           return "Invalid Mobile.";
