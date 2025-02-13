@@ -1,16 +1,15 @@
 import useUdyamSessionStore from "@/stores/useUdyamSessionStore";
 import { axios } from "@/lib/axios";
 
-import { DecentroResponse } from "../types"
-import { UdyamRegistrationDetailRequest, InitiateSessionData } from "../types/udyamRegistration"
+import { DecentroUdyamResponse, UdyamRegistrationDetailRequest, InitiateSessionData } from "../types/udyamRegistration"
 
-export const udyamInitiate = async (): Promise<DecentroResponse<InitiateSessionData>> => {
+export const udyamInitiate = async (): Promise<DecentroUdyamResponse<InitiateSessionData>> => {
   return axios.get(
     '/v2/kyc/register/udyam/initiate',
   );
 };
 
-export const udyamVerifySession = async (otp: string): Promise<DecentroResponse<null>> => {
+export const udyamVerifySession = async (otp: string): Promise<DecentroUdyamResponse<null>> => {
   const txnId = useUdyamSessionStore.getState().sessionTxnId
   return axios.post(
     `/v2/kyc/register/udyam/verify/${txnId}`,
@@ -20,7 +19,7 @@ export const udyamVerifySession = async (otp: string): Promise<DecentroResponse<
   );
 };
 
-export const udyamAddDetails = async (data: UdyamRegistrationDetailRequest): Promise<DecentroResponse<null>> => {
+export const udyamAddDetails = async (data: UdyamRegistrationDetailRequest): Promise<DecentroUdyamResponse<null>> => {
   const txnId = useUdyamSessionStore.getState().sessionTxnId
   return axios.post(
     `/v2/kyc/register/udyam/details/${txnId}`,
@@ -30,7 +29,7 @@ export const udyamAddDetails = async (data: UdyamRegistrationDetailRequest): Pro
   );
 };
 
-export const udyamConfirmOTP = async (otp: string): Promise<DecentroResponse<null>> => {
+export const udyamConfirmOTP = async (otp: string): Promise<DecentroUdyamResponse<null>> => {
   const txnId = useUdyamSessionStore.getState().sessionTxnId
   return axios.post(
     `/v2/kyc/register/udyam/confirm/${txnId}`, {
@@ -39,7 +38,7 @@ export const udyamConfirmOTP = async (otp: string): Promise<DecentroResponse<nul
   );
 };
 
-export const udyamResendOTP = async (otp: string): Promise<DecentroResponse<null>> => {
+export const udyamResendOTP = async (otp: string): Promise<DecentroUdyamResponse<null>> => {
   const txnId = useUdyamSessionStore.getState().sessionTxnId
   return axios.post(
     `/v2/kyc/register/udyam/resend/${txnId}`,

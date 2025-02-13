@@ -1,5 +1,17 @@
+export interface DecentroUdyamResponse<T> {
+    decentroTxnId: string;
+    initialDecentroTxnId: string;
+    status: string;
+    message: string;
+    data: T;
+    responseKey: string;
+}
+
 export interface UdyamStatusResponse{
+    status: string;
+    terminal: boolean;
     udyamNumber?: string;
+    description: string;
     error?: ErrorStatus
 }
 
