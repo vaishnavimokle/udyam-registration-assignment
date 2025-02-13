@@ -1,1 +1,1 @@
-export const API_URL="https://in.staging.decentro.tech"
+export const API_URL="https://in.qa.decentro.tech"

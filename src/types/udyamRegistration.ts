@@ -1,4 +1,6 @@
-export interface DecentroUdyamResponse<T> {
+import { UdyamRegistrationStage } from "@/constants/udyam";
+
+export interface UdyamStatusResponse<T> {
   decentroTxnId: string;
   initialDecentroTxnId: string;
   status: string;
@@ -7,8 +9,8 @@ export interface DecentroUdyamResponse<T> {
   responseKey: string;
 }
 
-export interface UdyamStatusResponse {
-  status: string;
+export interface UdyamStatusData {
+  status: UdyamRegistrationStage;
   terminal: boolean;
   udyamNumber?: string;
   description: string;

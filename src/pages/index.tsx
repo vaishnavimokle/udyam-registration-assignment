@@ -1,5 +1,5 @@
 import ScreenLayout from "@/components/layouts/screenLayout";
-import { Button, TextInput } from "@mantine/core";
+import { Button, PasswordInput, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import useAuthStore from "@/stores/useAuthStore";
 import { useEffect } from "react";
@@ -58,7 +58,7 @@ export default function Home() {
                 {...form.getInputProps("clientId")}
                 mb={16}
               />
-              <TextInput
+              <PasswordInput
                 required
                 label="Client Secret"
                 placeholder="Client Secret"

@@ -2,20 +2,28 @@ import useUdyamSessionStore from "@/stores/useUdyamSessionStore";
 import { axios } from "@/lib/axios";
 
 import {
-  DecentroUdyamResponse,
+  UdyamStatusResponse,
   UdyamRegistrationDetailRequest,
   InitiateSessionData,
 } from "../types/udyamRegistration";
 
-export const udyamInitiate = async (): Promise<
-  DecentroUdyamResponse<InitiateSessionData>
+export const udyamInitiate = async (isSimulated: boolean = false): Promise<
+  UdyamStatusResponse<InitiateSessionData>
 > => {
-  return axios.get("/v2/kyc/register/udyam/initiate");
+  if (isSimulated) {
+    return axios.get("/v2/kyc/register/udyam/initiate", {
+      headers: {
+        "x-simulation-request": "true",
+      },
+    });
+  } else {
+    return axios.get("/v2/kyc/register/udyam/initiate");
+  }
 };
 
 export const udyamVerifySession = async (
   otp: string
-): Promise<DecentroUdyamResponse<null>> => {
+): Promise<UdyamStatusResponse<null>> => {
   const txnId = useUdyamSessionStore.getState().sessionTxnId;
   return axios.post(`/v2/kyc/register/udyam/verify/${txnId}`, {
     otp: otp,
@@ -24,7 +32,7 @@ export const udyamVerifySession = async (
 
 export const udyamAddDetails = async (
   data: UdyamRegistrationDetailRequest
-): Promise<DecentroUdyamResponse<null>> => {
+): Promise<UdyamStatusResponse<null>> => {
   const txnId = useUdyamSessionStore.getState().sessionTxnId;
   return axios.post(`/v2/kyc/register/udyam/details/${txnId}`, {
     ...data,
@@ -33,7 +41,7 @@ export const udyamAddDetails = async (
 
 export const udyamConfirmOTP = async (
   otp: string
-): Promise<DecentroUdyamResponse<null>> => {
+): Promise<UdyamStatusResponse<null>> => {
   const txnId = useUdyamSessionStore.getState().sessionTxnId;
   return axios.post(`/v2/kyc/register/udyam/confirm/${txnId}`, {
     otp: otp,
@@ -42,7 +50,7 @@ export const udyamConfirmOTP = async (
 
 export const udyamResendOTP = async (
   otp: string
-): Promise<DecentroUdyamResponse<null>> => {
+): Promise<UdyamStatusResponse<null>> => {
   const txnId = useUdyamSessionStore.getState().sessionTxnId;
   return axios.post(`/v2/kyc/register/udyam/resend/${txnId}`, {
     otp: otp,
