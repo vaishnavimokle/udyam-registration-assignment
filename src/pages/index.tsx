@@ -58,6 +58,7 @@ export default function Home() {
                 defaultValue={APIUrl.QA}
                 data={Object.values(APIUrl)}
                 {...form.getInputProps("apiUrl")}
+                mb={16}
               />
               <TextInput
                 required
