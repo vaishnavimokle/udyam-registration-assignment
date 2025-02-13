@@ -1,12 +1,12 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
-interface AuthState {
+interface UdyamSessionState {
   sessionTxnId: string;
   setAuthState: (sessionTxnId: string) => void;
 }
 
-const useAuthStore = create<AuthState>()(
+const useUdyamSessionStore = create<UdyamSessionState>()(
   devtools(
     // persist(
     (set) => ({
@@ -23,4 +23,4 @@ const useAuthStore = create<AuthState>()(
   )
 );
 
-export default useAuthStore;
+export default useUdyamSessionStore;

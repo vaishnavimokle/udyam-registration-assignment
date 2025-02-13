@@ -1,4 +1,4 @@
-import Axios, { InternalAxiosRequestConfig } from "axios";
+import Axios, { AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import * as https from "https";
 import { API_URL } from "@/config";
 import useAuthStore from "@/stores/useAuthStore";
@@ -20,8 +20,9 @@ export const axios = Axios.create({
 axios.interceptors.request.use(defaultIntercepteor);
 
 axios.interceptors.response.use(
-  (response) => {
-    return response.data;
+  (response: AxiosResponse<any>) => {
+    const data: any = response.data
+    return data;
   },
   (error) => {
     const message = error.response?.data?.message || error.message;

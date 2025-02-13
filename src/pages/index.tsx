@@ -45,7 +45,7 @@ export default function Home() {
   };
 
   return (
-    <ScreenLayout title="Udyam Registration">
+    <ScreenLayout title="Decentro Fabric Udyam Registration Demo">
       <div className="w-full flex flex-col justify-around pt-10 md:pt-20">
         <div className="flex flex-col gap-6 items-center">
           <div className="w-full max-w-sm">
