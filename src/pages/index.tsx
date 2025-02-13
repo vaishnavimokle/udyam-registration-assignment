@@ -49,41 +49,40 @@ export default function Home() {
 
   return (
     <ScreenLayout title="Decentro Fabric Udyam Registration Demo">
-      <div className="w-full flex flex-col justify-around pt-10 md:pt-20">
-        <div className="flex flex-col gap-6 items-center">
-          <div className="w-full max-w-sm">
-            <form className="w-full max-w-sm">
-              <Select
-                label="Select your environment"
-                defaultValue={APIUrl.QA}
-                data={Object.values(APIUrl)}
-                {...form.getInputProps("apiUrl")}
-                mb={16}
-              />
+      <div className="absolute inset-0 flex items-center justify-center bg-gray-50">
+        <div className="w-full max-w-md bg-white p-6 rounded-3xl shadow-lg">
+          <form className="space-y-8">
+            <h2 className="text-center text-gray-700 mb-2 font-inter">
+              Configure Credentials
+            </h2>
+            <div className="space-y-4">
               <TextInput
                 required
                 label="Client ID"
-                placeholder="Client ID"
+                placeholder="Enter Client ID"
                 {...form.getInputProps("clientId")}
-                mb={16}
+                className="w-full font-inter text-base"
               />
-              <PasswordInput
-                required
-                label="Client Secret"
-                placeholder="Client Secret"
-                {...form.getInputProps("clientSecret")}
-                mb={16}
-              />
+              <div>
+                <label className="block text-sm text-gray-700 font-semibold mb-1 font-inter"></label>
+                <PasswordInput
+                  required
+                  label="Client Secret"
+                  placeholder="Enter Client Secret"
+                  {...form.getInputProps("clientSecret")}
+                  className="w-full font-inter text-base"
+                />
+              </div>
+            </div>
 
-              <Button
-                onClick={handleCredentialConfiguration}
-                type="button"
-                fullWidth
-              >
-                Configure
-              </Button>
-            </form>
-          </div>
+            <Button
+              onClick={handleCredentialConfiguration}
+              type="button"
+              className="w-full"
+            >
+              Configure
+            </Button>
+          </form>
         </div>
       </div>
     </ScreenLayout>

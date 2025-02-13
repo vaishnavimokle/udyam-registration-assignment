@@ -63,17 +63,15 @@ const HomePage = () => {
     }
   };
 
-  return (
-    <ScreenLayout title="Udyam Registration Initiate Session">
-      <div className="w-full flex flex-col justify-around pt-10 md:pt-20">
-        <div className="flex flex-col gap-6 items-center">
-          <div className="w-full max-w-sm">
-            <Button onClick={onInitiate} loading={loading}>
-              Initiate Udyam Registration
-            </Button>
+    return (
+      <ScreenLayout title="Udyam Registration Initiate Session">
+        <div className="w-full flex flex-col justify-around pt-10 md:pt-20">
+          <div className="flex flex-col gap-6 items-center">
+            <div className="max-w-sm">
+              <Button onClick={onInitiate} loading={loading}>Initiate Udyam Registration</Button>
+            </div>
           </div>
         </div>
-      </div>
     </ScreenLayout>
   );
 };
