@@ -6,9 +6,7 @@ import {
   UdyamStatusData,
 } from "../types/udyamRegistration";
 
-export const udyamRegistrationStatus = async (): Promise<
-  UdyamStatusResponse<UdyamStatusData>
-> => {
+export const udyamRegistrationStatus = async (): Promise<UdyamStatusResponse> => {
   const txnId = useUdyamSessionStore.getState().sessionTxnId;
   return axios.get(`/v2/kyc/register/udyam/status/${txnId}`);
 };

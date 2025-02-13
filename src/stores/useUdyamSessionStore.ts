@@ -3,7 +3,7 @@ import { devtools, persist } from "zustand/middleware";
 
 interface UdyamSessionState {
   sessionTxnId: string;
-  setAuthState: (sessionTxnId: string) => void;
+  setSessionTxnId: (sessionTxnId: string) => void;
 }
 
 const useUdyamSessionStore = create<UdyamSessionState>()(
@@ -11,7 +11,7 @@ const useUdyamSessionStore = create<UdyamSessionState>()(
     // persist(
     (set) => ({
       sessionTxnId: "",
-      setAuthState: (sessionTxnId: string) =>
+      setSessionTxnId: (sessionTxnId: string) =>
         set(() => ({
           sessionTxnId: sessionTxnId,
         })),

@@ -1,11 +1,11 @@
 import { UdyamRegistrationStage } from "@/constants/udyam";
 
-export interface UdyamStatusResponse<T> {
+export interface UdyamStatusResponse {
   decentroTxnId: string;
   initialDecentroTxnId: string;
   status: string;
   message: string;
-  data: T;
+  data: UdyamStatusData;
   responseKey: string;
 }
 
