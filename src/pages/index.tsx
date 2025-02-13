@@ -1,17 +1,19 @@
 import ScreenLayout from "@/components/layouts/screenLayout";
-import { Button, PasswordInput, TextInput } from "@mantine/core";
+import { Button, PasswordInput, Select, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import useAuthStore from "@/stores/useAuthStore";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
+import { APIUrl } from "@/constants/apiUrl";
 
 export default function Home() {
   const setAuthState = useAuthStore((state) => state.setAuthState);
-  const { clientId, clientSecret } = useAuthStore();
+  const { apiUrl, clientId, clientSecret } = useAuthStore();
   const router = useRouter();
 
   const form = useForm({
     initialValues: {
+      apiUrl: apiUrl,
       clientId: clientId,
       clientSecret: clientSecret,
     },
@@ -51,6 +53,12 @@ export default function Home() {
         <div className="flex flex-col gap-6 items-center">
           <div className="w-full max-w-sm">
             <form className="w-full max-w-sm">
+              <Select
+                label="Select your environment"
+                defaultValue={APIUrl.QA}
+                data={Object.values(APIUrl)}
+                {...form.getInputProps("apiUrl")}
+              />
               <TextInput
                 required
                 label="Client ID"
