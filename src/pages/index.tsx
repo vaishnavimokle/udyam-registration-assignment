@@ -1,5 +1,5 @@
 import ScreenLayout from "@/components/layouts/screenLayout";
-import { Button, PasswordInput, Select, TextInput } from "@mantine/core";
+import { Button, Card, PasswordInput, Select, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import useAuthStore from "@/stores/useAuthStore";
 import { useEffect } from "react";
@@ -48,7 +48,7 @@ export default function Home() {
   return (
     <ScreenLayout title="Decentro Fabric Udyam Registration Demo">
       <div className="absolute inset-0 flex items-center justify-center bg-gray-50">
-        <div className="w-full max-w-md bg-white p-6 rounded-3xl shadow-lg">
+        <Card shadow="lg" padding="lg" radius="lg" className="w-full max-w-md">
           <form className="space-y-8">
             <h2 className="text-center text-gray-700 mb-2 font-inter">
               Configure Credentials
@@ -73,14 +73,11 @@ export default function Home() {
               </div>
             </div>
 
-            <Button
-              onClick={handleCredentialConfiguration}
-              fullWidth
-            >
+            <Button onClick={handleCredentialConfiguration} fullWidth>
               Configure
             </Button>
           </form>
-        </div>
+        </Card>
       </div>
     </ScreenLayout>
   );

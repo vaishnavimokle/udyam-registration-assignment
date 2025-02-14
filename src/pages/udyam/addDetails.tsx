@@ -1,32 +1,30 @@
 import ScreenLayout from "@/components/layouts/screenLayout";
-import {
-  Button,
-  Text,
-  TextInput,
-  NumberInput,
-  Select,
-  Checkbox,
-} from "@mantine/core";
-import { DateInput } from "@mantine/dates";
-import { useForm } from "@mantine/form";
+import { Button, Text, Group, Badge, Modal } from "@mantine/core";
 import {
   ActivityCategory,
   Gender,
   SocialCategory,
   TypeOfOrganisation,
 } from "@/constants/addDetails";
+import { UdyamRegistrationDetailRequest } from "@/types/udyamRegistration";
+import { ReactNode, useState } from "react";
+import { udyamAddDetails } from "@/api/udyamRegistration";
+import pollForStatus from "@/services/udyam/statusPoller";
+import { OTPVerificationType, UdyamRegistrationStage } from "@/constants/udyam";
+import { useRouter } from "next/router";
+import FormCard from "@/components/udyam/details/formCard";
+import BasicDetailForm from "@/components/udyam/details/basicForm";
 
 const AddDetailPage = () => {
-  const form = useForm({
-    initialValues: {
+  const [udyamDetails, setUdyamDetails] =
+    useState<UdyamRegistrationDetailRequest>({
+      typeOfOrganisation: TypeOfOrganisation.CO_OPERATIVE,
       pan: "",
-      nameOnPan: "",
-      typeOfOrganisation: "",
       dob: "",
       email: "",
       mobile: "",
-      socialCategory: "",
-      gender: "",
+      socialCategory: SocialCategory.GENERAL,
+      gender: Gender.MALE,
       speciallyAbled: false,
       enterpriseName: "",
       units: [],
@@ -37,486 +35,245 @@ const AddDetailPage = () => {
         block: "",
         road: "",
         city: "",
-        district: "KOLHAPUR",
-        state: "MAHARASHTRA",
-        pincode: "416003",
+        district: "",
+        state: "",
+        pincode: "",
+        stateValue: "",
+        districtValue: "",
       },
       enterpriseStatus: {
         dateOfIncorporation: "",
-        dateOfCommencement: null,
+        dateOfCommencement: "",
       },
       bankDetails: {
-        accountNumber: null,
-        ifscCode: null,
+        accountNumber: "",
+        ifscCode: "",
       },
-      activityCategory: "",
+      activityCategory: ActivityCategory.MANUFACTURING,
       tradingServices: false,
-      nic_codes: ["10409"],
+      nicCodes: ["asdsad", "asdddd"],
       numberOfEmployees: {
-        male: null,
-        female: null,
-        others: null,
+        male: 0,
+        female: 0,
+        others: 0,
       },
-    },
-    validate: {},
-    validateInputOnBlur: true,
-  });
+      nameOnPan: "",
+    });
+  const [error, setError] = useState();
+  const [openForm, setOpenForm] = useState(false);
+  const [formContent, setFromContent] = useState<ReactNode>();
 
-  const handleDetailAddition = form.onSubmit((values) => {});
+  const router = useRouter();
+
+  const verifyUdyamDetails = (
+    udyamDetails: UdyamRegistrationDetailRequest
+  ): boolean => {
+    return true;
+  };
+
+  const handleSubmitDetails = async () => {
+    if (udyamDetails && verifyUdyamDetails(udyamDetails)) {
+      const addDetailsResp = await udyamAddDetails(udyamDetails);
+      if (addDetailsResp.status == "SUCCESS") {
+        const status = await pollForStatus([
+          UdyamRegistrationStage.SESSION_DETAILS_ADDITION_SUCCESSFUL,
+          UdyamRegistrationStage.SESSION_DETAILS_ADDITION_FAILED_ACTIVE_SESSION,
+          UdyamRegistrationStage.SESSION_DETAILS_ADDITION_FAILED,
+        ]);
+        if (status) {
+          if (
+            status.data.status ==
+            UdyamRegistrationStage.SESSION_DETAILS_ADDITION_SUCCESSFUL
+          ) {
+            router.push({
+              pathname: "/udyam/otp",
+              query: {
+                type: OTPVerificationType.VERIFY_SESSION,
+                redirectUrl: "/udyam/success",
+              },
+            });
+          }
+        } else {
+          console.log("Poller timed out");
+        }
+      }
+    }
+  };
+
+  const handleCloseForm = () => {
+    setOpenForm(false);
+    setFromContent(undefined);
+  };
+
+  const handleBasicDetailsEdit = () => {
+    setFromContent(
+      <BasicDetailForm
+        pan={udyamDetails.pan}
+        nameOnPan={udyamDetails.nameOnPan}
+        typeOfOrganisation={udyamDetails.typeOfOrganisation}
+        dob={udyamDetails.dob}
+        email={udyamDetails.email}
+        mobile={udyamDetails.mobile}
+        socialCategory={udyamDetails.socialCategory}
+        gender={udyamDetails.gender}
+        speciallyAbled={udyamDetails.speciallyAbled}
+        onSubmit={(updatedDetails) => {
+          setUdyamDetails((prevDetails) => ({
+            ...prevDetails,
+            pan: updatedDetails.pan,
+            nameOnPan: updatedDetails.nameOnPan,
+            typeOfOrganisation: updatedDetails.typeOfOrganisation,
+            dob: updatedDetails.dob,
+            email: updatedDetails.email,
+            mobile: updatedDetails.mobile,
+            socialCategory: updatedDetails.socialCategory,
+            gender: updatedDetails.gender,
+            speciallyAbled: updatedDetails.speciallyAbled,
+          }));
+          handleCloseForm();
+        }}
+      />
+    );
+    setOpenForm(true);
+  };
 
   return (
     <ScreenLayout title="Udyam Registration - Add Details">
-      <div className="w-full flex flex-col justify-around pt-8">
+      <div className="w-full flex flex-col justify-around p-8">
         <div className="flex flex-col gap-6 items-center">
           <div className="w-full">
-            <form onSubmit={handleDetailAddition}>
-              <div className="flex justify-stretch">
-                <div className="w-full mr-8">
-                  <Text mb={16}>Enterprise Details</Text>
-                  {/* PAN Details */}
-                  <div className="flex justify-stretch">
-                    <TextInput
-                      required
-                      className="w-full"
-                      label="PAN Number"
-                      placeholder="PAN Number"
-                      {...form.getInputProps("pan")}
-                      mb={16}
-                      mr={16}
-                    />
-
-                    <TextInput
-                      required
-                      className="w-full"
-                      label="Name on PAN"
-                      placeholder="Name on PAN"
-                      {...form.getInputProps("nameOnPan")}
-                      mb={16}
-                      mr={16}
-                    />
-
-                    <Select
-                      required
-                      className="w-full"
-                      label="Type of organisation"
-                      placeholder="Type of organisation"
-                      {...form.getInputProps("typeOfOrganisation")}
-                      mb={16}
-                      data={Object.values(TypeOfOrganisation)}
-                    />
+            <div className="space-y-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+                <FormCard
+                  title="Basic Details"
+                  onEditClick={handleBasicDetailsEdit}
+                >
+                  <div className="text-sm flex flex-col gap-1">
+                    <span>
+                      <span className="text-gray-600 text-xs">
+                        Name on PAN:
+                      </span>{" "}
+                      {udyamDetails.nameOnPan}
+                    </span>
+                    <span>
+                      <span className="text-gray-600 text-xs">PAN:</span>{" "}
+                      {udyamDetails.pan}
+                    </span>
+                    <span>
+                      <span className="text-gray-600 text-xs">
+                        Type of Org:
+                      </span>{" "}
+                      {udyamDetails.typeOfOrganisation}
+                    </span>
+                    <span>
+                      <span className="text-gray-600 text-xs">
+                        Date of Birth:
+                      </span>{" "}
+                      {udyamDetails.dob}
+                    </span>
+                    <span>
+                      <span className="text-gray-600 text-xs">Email:</span>{" "}
+                      {udyamDetails.email}
+                    </span>
+                    <span>
+                      <span className="text-gray-600 text-xs">Mobile:</span>{" "}
+                      {udyamDetails.mobile}
+                    </span>
+                    <span>
+                      <span className="text-gray-600 text-xs">
+                        Social Category:
+                      </span>{" "}
+                      {udyamDetails.socialCategory}
+                    </span>
+                    <span>
+                      <span className="text-gray-600 text-xs">Gender:</span>{" "}
+                      {udyamDetails.gender}
+                    </span>
+                    <span>
+                      <span className="text-gray-600 text-xs">
+                        Specially Abled:
+                      </span>{" "}
+                      {udyamDetails.speciallyAbled ? "Yes" : "No"}
+                    </span>
                   </div>
-
-                  {/* Personal Details */}
-                  <div className="flex justify-stretch">
-                    <DateInput
-                      required
-                      className="w-full"
-                      label="Date of birth"
-                      placeholder="Date of birth"
-                      {...form.getInputProps("dob")}
-                      mb={16}
-                      mr={16}
-                    />
-
-                    <TextInput
-                      required
-                      className="w-full"
-                      label="Email"
-                      placeholder="Email"
-                      {...form.getInputProps("email")}
-                      mb={16}
-                      mr={16}
-                    />
-
-                    <TextInput
-                      required
-                      className="w-full"
-                      label="Mobile"
-                      placeholder="Mobile"
-                      {...form.getInputProps("mobile")}
-                      mb={16}
-                    />
+                </FormCard>
+                <FormCard
+                  title="Enterprise Details"
+                  onEditClick={handleBasicDetailsEdit}
+                >
+                  <Text size="sm" c="dimmed">
+                    With Fjord Tours you can explore more of the magical fjord
+                    landscapes with tours and activities on and around the
+                    fjords of Norway
+                  </Text>
+                </FormCard>
+                <FormCard
+                  title="Additional Details"
+                  onEditClick={handleBasicDetailsEdit}
+                >
+                  <Text size="sm" c="dimmed">
+                    With Fjord Tours you can explore more of the magical fjord
+                    landscapes with tours and activities on and around the
+                    fjords of Norway
+                  </Text>
+                </FormCard>
+                <FormCard
+                  title="NIC Code List"
+                  onEditClick={handleBasicDetailsEdit}
+                >
+                  <div className="flex flex-wrap gap-4">
+                    {udyamDetails?.nicCodes.map((nicCode) => (
+                      <Badge
+                        variant="gradient"
+                        gradient={{ from: "#096ef2", to: "#0092ff", deg: 90 }}
+                      >
+                        {nicCode}
+                      </Badge>
+                    ))}
                   </div>
-
-                  <div className="flex justify-stretch items-center">
-                    <Select
-                      required
-                      className="w-full"
-                      label="Social Category"
-                      placeholder="Social Category"
-                      {...form.getInputProps("socialCategory")}
-                      mb={16}
-                      mr={16}
-                      data={Object.values(SocialCategory)}
-                    />
-
-                    <Select
-                      required
-                      className="w-full"
-                      label="Gender"
-                      placeholder="Gender"
-                      {...form.getInputProps("gender")}
-                      mb={16}
-                      mr={16}
-                      data={Object.values(Gender)}
-                    />
-
-                    <Checkbox
-                      required
-                      className="w-full"
-                      label="Specially Abled"
-                      {...form.getInputProps("speciallyAbled", {
-                        type: "checkbox",
-                      })}
-                      mb={16}
-                    />
-                  </div>
-
-                  <div className="flex justify-stretch items-center">
-                    <TextInput
-                      required
-                      className="w-full"
-                      label="Enterprise Name"
-                      placeholder="Enterprise Name"
-                      {...form.getInputProps("enterpriseName")}
-                      mb={16}
-                      mr={16}
-                    />
-
-                    <Select
-                      required
-                      className="w-full"
-                      label="Activity Category"
-                      placeholder="Activity Category"
-                      {...form.getInputProps("activityCategory")}
-                      mb={16}
-                      mr={16}
-                      data={Object.values(ActivityCategory)}
-                    />
-
-                    <Checkbox
-                      required
-                      className="w-full"
-                      label="Trading Services"
-                      {...form.getInputProps("tradingServices", {
-                        type: "checkbox",
-                      })}
-                      mb={16}
-                    />
-                  </div>
-
-                  <div className="flex justify-stretch items-center">
-                    <DateInput
-                      required
-                      className="w-full"
-                      label="Date Of Incorporation"
-                      placeholder="Date Of Incorporation"
-                      key={form.key("enterpriseStatus.dateOfIncorporation")}
-                      {...form.getInputProps(
-                        "enterpriseStatus.dateOfIncorporation"
-                      )}
-                      mb={16}
-                      mr={16}
-                    />
-
-                    <DateInput
-                      className="w-full"
-                      label="Date Of Commencement"
-                      placeholder="Date Of Commencement"
-                      key={form.key("enterpriseStatus.dateOfCommencement")}
-                      {...form.getInputProps(
-                        "enterpriseStatus.dateOfCommencement"
-                      )}
-                      mb={16}
-                      mr={16}
-                    />
-                  </div>
-
-                  <div className="flex justify-stretch items-center">
-                    <TextInput
-                      required
-                      className="w-full"
-                      label="Account Number"
-                      placeholder="Account Number"
-                      key={form.key("bankDetails.accountNumber")}
-                      {...form.getInputProps("bankDetails.accountNumber")}
-                      mb={16}
-                      mr={16}
-                    />
-
-                    <TextInput
-                      required
-                      className="w-full"
-                      label="IFSC"
-                      placeholder="IFSC"
-                      key={form.key("bankDetails.ifscCode")}
-                      {...form.getInputProps("bankDetails.ifscCode")}
-                      mb={16}
-                      mr={16}
-                    />
-                  </div>
-
-                  <div className="flex justify-stretch items-center">
-                    <NumberInput
-                      required
-                      className="w-full"
-                      label="Employee count (male)"
-                      placeholder="Employee count (Male)"
-                      key={form.key("numberOfEmployees.male")}
-                      {...form.getInputProps("numberOfEmployees.male")}
-                      mb={16}
-                      mr={16}
-                    />
-
-                    <NumberInput
-                      required
-                      className="w-full"
-                      label="Employee count (female)"
-                      placeholder="Employee count (female)"
-                      key={form.key("numberOfEmployees.female")}
-                      {...form.getInputProps("numberOfEmployees.female")}
-                      mb={16}
-                      mr={16}
-                    />
-
-                    <NumberInput
-                      required
-                      className="w-full"
-                      label="Employee count (others)"
-                      placeholder="Employee count (others)"
-                      key={form.key("numberOfEmployees.others")}
-                      {...form.getInputProps("numberOfEmployees.others")}
-                      mb={16}
-                      mr={16}
-                    />
-                  </div>
-                </div>
-
-                <div className="w-full">
-                  <Text mb={16}>Official Address</Text>
-
-                  <div className="flex justify-stretch">
-                    <TextInput
-                      required
-                      className="w-full"
-                      label="Door"
-                      placeholder="Door"
-                      key={form.key("officialAddress.door")}
-                      {...form.getInputProps("officialAddress.door")}
-                      mb={16}
-                      mr={16}
-                    />
-
-                    <TextInput
-                      required
-                      className="w-full"
-                      label="Premises"
-                      placeholder="Premises"
-                      key={form.key("officialAddress.premises")}
-                      {...form.getInputProps("officialAddress.premises")}
-                      mb={16}
-                      mr={16}
-                    />
-
-                    <TextInput
-                      required
-                      className="w-full"
-                      label="Town"
-                      placeholder="Town"
-                      key={form.key("officialAddress.town")}
-                      {...form.getInputProps("officialAddress.town")}
-                      mb={16}
-                    />
-                  </div>
-
-                  <div className="flex justify-stretch">
-                    <TextInput
-                      required
-                      className="w-full"
-                      label="Block"
-                      placeholder="Block"
-                      key={form.key("officialAddress.block")}
-                      {...form.getInputProps("officialAddress.block")}
-                      mb={16}
-                      mr={16}
-                    />
-                    <TextInput
-                      required
-                      className="w-full"
-                      label="Road"
-                      placeholder="Road"
-                      key={form.key("officialAddress.road")}
-                      {...form.getInputProps("officialAddress.road")}
-                      mb={16}
-                      mr={16}
-                    />
-                    <TextInput
-                      required
-                      className="w-full"
-                      label="City"
-                      placeholder="City"
-                      key={form.key("officialAddress.city")}
-                      {...form.getInputProps("officialAddress.city")}
-                      mb={16}
-                    />
-                  </div>
-
-                  <div className="flex justify-stretch">
-                    <Select
-                      required
-                      className="w-full"
-                      label="District"
-                      placeholder="District"
-                      key={form.key("officialAddress.district")}
-                      {...form.getInputProps("officialAddress.district")}
-                      mb={16}
-                      mr={16}
-                      data={["KOLHAPUR"]}
-                      disabled
-                    />
-
-                    <Select
-                      required
-                      className="w-full"
-                      label="State"
-                      placeholder="State"
-                      key={form.key("officialAddress.state")}
-                      mb={16}
-                      mr={16}
-                      data={["MAHARASHTRA"]}
-                      {...form.getInputProps("officialAddress.state")}
-                      disabled
-                    />
-
-                    <TextInput
-                      required
-                      className="w-full"
-                      label="Pincode"
-                      placeholder="Pincode"
-                      key={form.key("officialAddress.pincode")}
-                      {...form.getInputProps("officialAddress.pincode")}
-                      mb={16}
-                      disabled
-                    />
-                  </div>
-
-                  <Text mb={16}>Unit Address</Text>
-                  <div className="flex justify-stretch">
-                    <TextInput
-                      required
-                      className="w-full"
-                      label="Door"
-                      placeholder="Door"
-                      key={form.key("officialAddress.door")}
-                      {...form.getInputProps("officialAddress.door")}
-                      mb={16}
-                      mr={16}
-                    />
-
-                    <TextInput
-                      required
-                      className="w-full"
-                      label="Premises"
-                      placeholder="Premises"
-                      key={form.key("officialAddress.premises")}
-                      {...form.getInputProps("officialAddress.premises")}
-                      mb={16}
-                      mr={16}
-                    />
-
-                    <TextInput
-                      required
-                      className="w-full"
-                      label="Town"
-                      placeholder="Town"
-                      key={form.key("officialAddress.town")}
-                      {...form.getInputProps("officialAddress.town")}
-                      mb={16}
-                    />
-                  </div>
-
-                  <div className="flex justify-stretch">
-                    <TextInput
-                      required
-                      className="w-full"
-                      label="Block"
-                      placeholder="Block"
-                      key={form.key("officialAddress.block")}
-                      {...form.getInputProps("officialAddress.block")}
-                      mb={16}
-                      mr={16}
-                    />
-                    <TextInput
-                      required
-                      className="w-full"
-                      label="Road"
-                      placeholder="Road"
-                      key={form.key("officialAddress.road")}
-                      {...form.getInputProps("officialAddress.road")}
-                      mb={16}
-                      mr={16}
-                    />
-                    <TextInput
-                      required
-                      className="w-full"
-                      label="City"
-                      placeholder="City"
-                      key={form.key("officialAddress.city")}
-                      {...form.getInputProps("officialAddress.city")}
-                      mb={16}
-                    />
-                  </div>
-
-                  <div className="flex justify-stretch">
-                    <Select
-                      required
-                      className="w-full"
-                      label="District"
-                      placeholder="District"
-                      key={form.key("officialAddress.district")}
-                      {...form.getInputProps("officialAddress.district")}
-                      mb={16}
-                      mr={16}
-                      data={["KOLHAPUR"]}
-                      disabled
-                    />
-
-                    <Select
-                      required
-                      className="w-full"
-                      label="State"
-                      placeholder="State"
-                      key={form.key("officialAddress.state")}
-                      mb={16}
-                      mr={16}
-                      data={["MAHARASHTRA"]}
-                      {...form.getInputProps("officialAddress.state")}
-                      disabled
-                    />
-
-                    <TextInput
-                      required
-                      className="w-full"
-                      label="Pincode"
-                      placeholder="Pincode"
-                      key={form.key("officialAddress.pincode")}
-                      {...form.getInputProps("officialAddress.pincode")}
-                      mb={16}
-                      disabled
-                    />
-                  </div>
-
-                </div>
-
+                  {!udyamDetails?.nicCodes && (
+                    <Text size="sm" c="dimmed">
+                      Please add NIC Codes
+                    </Text>
+                  )}
+                </FormCard>
+                <FormCard
+                  title="Unit List"
+                  onEditClick={handleBasicDetailsEdit}
+                >
+                  {!udyamDetails?.nicCodes && (
+                    <Text size="sm" c="dimmed">
+                      No units added
+                    </Text>
+                  )}
+                </FormCard>
               </div>
 
-              <Button type="submit" fullWidth>
-                Submit
-              </Button>
-            </form>
+              <div className="w-full flex justify-around">
+                <div className="flex flex-col gap-4 w-full max-w-xs">
+                  <Button onClick={handleSubmitDetails} fullWidth>
+                    Submit
+                  </Button>
+                  {error && (
+                    <span className="text-red-600 text-wrap">
+                      Error: {error}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+      <Modal
+        centered
+        radius="md"
+        title="Add Details"
+        opened={openForm}
+        onClose={handleCloseForm}
+      >
+        {formContent}
+      </Modal>
     </ScreenLayout>
   );
 };

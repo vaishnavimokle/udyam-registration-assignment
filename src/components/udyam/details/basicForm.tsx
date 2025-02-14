@@ -10,12 +10,12 @@ import { isEmail, isNotEmpty, useForm } from "@mantine/form";
 type BasicDetailField = {
   pan: string;
   nameOnPan: string | undefined;
-  typeOfOrganisation: string;
+  typeOfOrganisation: TypeOfOrganisation;
   dob: string;
   email: string;
   mobile: string;
-  socialCategory: string;
-  gender: string;
+  socialCategory: SocialCategory;
+  gender: Gender;
   speciallyAbled: boolean;
 };
 
@@ -113,7 +113,14 @@ const BasicDetailForm = ({
         className="w-full"
         label="Date of birth"
         placeholder="Date of birth"
-        {...form.getInputProps("dob")}
+        valueFormat="YYYY-MM-DD"
+        value={form.values.dob ? new Date(form.values.dob) : undefined}
+        onChange={(date) =>
+          form.setFieldValue(
+            "dob",
+            date ? date.toISOString().split("T")[0] : ""
+          )
+        }
         mb={16}
       />
 

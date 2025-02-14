@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { PinInput, Button, Stack, Text, Input } from "@mantine/core";
+import { PinInput, Button, Input } from "@mantine/core";
 
 type OTPFormProps = {
   onSubmit: (otp: string) => void;
