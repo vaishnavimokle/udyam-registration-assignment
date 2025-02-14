@@ -1,3 +1,5 @@
+import { stateDistMapping } from "@/constants/stateDistMapping";
+import { UdyamUnitDetail } from "@/types/udyamRegistration";
 import {
   ActionIcon,
   Button,
@@ -8,21 +10,11 @@ import {
   TableData,
 } from "@mantine/core";
 import { isNotEmpty, useForm } from "@mantine/form";
+import { useState } from "react";
 import { TbTrash } from "react-icons/tb";
 
 type UnitField = {
-  units: {
-    unitName: string;
-    door: string;
-    premises: string;
-    town: string;
-    block: string;
-    road: string;
-    city: string;
-    district: string;
-    state: string;
-    pincode: string;
-  }[];
+  units?: UdyamUnitDetail[];
 };
 
 type UnitFormProps = UnitField & {
@@ -32,7 +24,7 @@ type UnitFormProps = UnitField & {
 const UnitDetailForm = ({ units, onSubmit }: UnitFormProps) => {
   const form = useForm({
     initialValues: {
-      units: units,
+      units: units || [],
     },
     validateInputOnBlur: true,
   });
@@ -67,6 +59,8 @@ const UnitDetailForm = ({ units, onSubmit }: UnitFormProps) => {
     },
     validateInputOnBlur: true,
   });
+
+  const [selctedState, setSelectedState] = useState<string>("MAHARASHTRA");
 
   const handleAdd = () => {
     if (
@@ -103,27 +97,25 @@ const UnitDetailForm = ({ units, onSubmit }: UnitFormProps) => {
       "Pincode",
       "",
     ],
-    body: form
-      .getValues()
-      .units.map((item, index) => [
-        item.unitName,
-        item.door,
-        item.premises,
-        item.town,
-        item.block,
-        item.road,
-        item.city,
-        item.district,
-        item.state,
-        item.pincode,
-        <ActionIcon
-          variant="filled"
-          color="red"
-          onClick={() => form.removeListItem("units", index)}
-        >
-          <TbTrash size={24} />
-        </ActionIcon>,
-      ]),
+    body: form.getValues().units.map((item, index) => [
+      item.unitName,
+      item.door,
+      item.premises,
+      item.town,
+      item.block,
+      item.road,
+      item.city,
+      item.district,
+      item.state,
+      item.pincode,
+      <ActionIcon
+        variant="filled"
+        color="red"
+        onClick={() => form.removeListItem("units", index)}
+      >
+        <TbTrash size={24} />
+      </ActionIcon>,
+    ]),
   };
 
   return (
@@ -197,21 +189,41 @@ const UnitDetailForm = ({ units, onSubmit }: UnitFormProps) => {
           <Select
             required
             className="w-full"
-            label="District"
-            placeholder="District"
-            {...nestedForm.getInputProps("district")}
+            label="State"
+            placeholder="State"
             mr={16}
-            data={["KOLHAPUR"]}
+            value={selctedState}
+            searchable
+            data={Object.keys(stateDistMap)}
+            onChange={(state) => {
+              if (state) {
+                nestedForm.setFieldValue("district", "")
+                setSelectedState(state);
+              }
+            }}
           />
 
           <Select
             required
             className="w-full"
-            label="State"
-            placeholder="State"
+            label="District"
+            placeholder="District"
+            {...nestedForm.getInputProps("district")}
             mr={16}
-            data={["MAHARASHTRA"]}
-            {...nestedForm.getInputProps("state")}
+            defaultValue="KOLHAPUR"
+            searchable
+            data={stateDistMap[selctedState].map((obj: any) => ({
+              ...obj,
+              value: obj.district,
+            }))}
+            value={nestedForm.values.district}
+            onChange={(dist) => {
+              const stateDist =
+                stateDistMapping.find((map) => map.district == dist) ||
+                stateDistMapping[0];
+              nestedForm.setFieldValue("district", stateDist.district);
+              nestedForm.setFieldValue("state", stateDist.state);
+            }}
           />
 
           <TextInput
@@ -236,7 +248,7 @@ const UnitDetailForm = ({ units, onSubmit }: UnitFormProps) => {
 
       {form.values.units.length > 0 && (
         <Table.ScrollContainer minWidth={1024}>
-            <Table className="mt-4" data={tableData} />
+          <Table className="mt-4" data={tableData} />
         </Table.ScrollContainer>
       )}
 
@@ -250,3 +262,11 @@ const UnitDetailForm = ({ units, onSubmit }: UnitFormProps) => {
 };
 
 export default UnitDetailForm;
+
+const stateDistMap = stateDistMapping.reduce((acc: any, curr) => {
+  if (!acc[curr.state]) {
+    acc[curr.state] = [];
+  }
+  acc[curr.state].push(curr);
+  return acc;
+}, {});

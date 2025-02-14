@@ -4,10 +4,12 @@ import { UdyamStatusResponse } from "@/types/udyamRegistration";
 
 const pollForStatus = async (
   expectedStages: UdyamRegistrationStage[],
+  initialDelay: boolean = false,
   interval: number = 5,
   timeout: number = 300
 ): Promise<UdyamStatusResponse | null> => {
   const endTime = Date.now() + timeout * 1000;
+  if (initialDelay) await new Promise((resolve) => setTimeout(resolve, 5000));
   while (Date.now() < endTime) {
     const statusResponse = (await udyamRegistrationStatus());
     console.log("Current status:", statusResponse.data);

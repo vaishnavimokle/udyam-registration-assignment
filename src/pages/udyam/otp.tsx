@@ -1,4 +1,4 @@
-import { udyamVerifySession } from "@/api/udyamRegistration";
+import { udyamConfirmOTP, udyamVerifySession } from "@/api/udyamRegistration";
 import ScreenLayout from "@/components/layouts/screenLayout";
 import OTPForm from "@/components/udyam/OTPForm";
 import { OTPVerificationType, UdyamRegistrationStage } from "@/constants/udyam";
@@ -65,9 +65,7 @@ export default function OTPPage() {
     }
   };
 
-  const handleConfirmRegistrationStatus = (
-    status: UdyamStatusResponse
-  ) => {
+  const handleConfirmRegistrationStatus = (status: UdyamStatusResponse) => {
     if (
       status.data.status ==
       UdyamRegistrationStage.SESSION_CONFIRMATION_OTP_SUCCESSFUL
@@ -76,7 +74,7 @@ export default function OTPPage() {
         pathname: "/udyam/success",
         query: {
           message: status.data.description,
-          udyamNumber: status.data.udyamNumber
+          udyamNumber: status.data.udyamNumber,
         },
       });
     } else if (
@@ -97,21 +95,22 @@ export default function OTPPage() {
   };
 
   const onSubmit = async (otp: string) => {
-    const addDetailsResp = await udyamVerifySession(otp);
-    if (addDetailsResp.status == "SUCCESS") {
-      const otpType = type as OTPVerificationType;
-      const status = await pollForStatus(getAcceptableStages(otpType));
-
-      if (status) {
-        switch (otpType) {
-          case OTPVerificationType.VERIFY_SESSION:
-            handleVerifySessionStatus(status);
-          case OTPVerificationType.CONFIRM_REGISTRATION:
-            handleConfirmRegistrationStatus(status);
-        }
-      } else {
-        console.log("Poller timed out");
-      }
+    const otpType = type as OTPVerificationType;
+    var addDetailsResp;
+    var status;
+    switch (otpType) {
+      case OTPVerificationType.VERIFY_SESSION:
+        addDetailsResp = await udyamVerifySession(otp);
+        status = await pollForStatus(getAcceptableStages(otpType));
+        if (status) handleVerifySessionStatus(status);
+        else console.log("Poller timed out");
+        break;
+      case OTPVerificationType.CONFIRM_REGISTRATION:
+        addDetailsResp = await udyamConfirmOTP(otp);
+        status = await pollForStatus(getAcceptableStages(otpType));
+        if (status) handleConfirmRegistrationStatus(status);
+        else console.log("Poller timed out");
+        break;
     }
   };
 

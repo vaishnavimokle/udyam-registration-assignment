@@ -34,7 +34,7 @@ const HomePage = () => {
           const status = await pollForStatus([
             UdyamRegistrationStage.SESSION_INITIATION_SUCCESSFUL,
             UdyamRegistrationStage.SESSION_INITIATION_FAILED,
-          ]);
+          ],true);
           setBtnLoading(false);
           if (status) {
             if (

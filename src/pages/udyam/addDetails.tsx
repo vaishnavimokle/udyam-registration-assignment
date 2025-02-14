@@ -11,6 +11,7 @@ import {
   UdyamBankDetail,
   UdyamEmployeeDetail,
   UdyamRegistrationDetailRequest,
+  UdyamUnitDetail,
 } from "@/types/udyamRegistration";
 import { ReactNode, useState } from "react";
 import { udyamAddDetails } from "@/api/udyamRegistration";
@@ -21,50 +22,45 @@ import FormCard from "@/components/udyam/details/formCard";
 import BasicDetailForm from "@/components/udyam/details/basicForm";
 import EnterpriseDetailForm from "@/components/udyam/details/enterpriseForm";
 import ExtraDetailForm from "@/components/udyam/details/extraForm";
+import NicCodeForm from "@/components/udyam/details/nicCodeForm";
+import UnitDetailForm from "@/components/udyam/details/unitForm";
 
 const AddDetailPage = () => {
   const [udyamDetails, setUdyamDetails] =
     useState<UdyamRegistrationDetailRequest>({
-      typeOfOrganisation: TypeOfOrganisation.CO_OPERATIVE,
-      pan: "",
-      dob: "",
-      email: "",
-      mobile: "",
+      typeOfOrganisation: TypeOfOrganisation.OTHERS,
+      pan: "BLBPC8598L",
+      dob: "1935-11-11",
+      email: "avinash.chandra@decentro.tech",
+      mobile: "9356479551",
       socialCategory: SocialCategory.GENERAL,
       gender: Gender.MALE,
       speciallyAbled: false,
-      enterpriseName: "",
-      units: [],
+      enterpriseName: "Ninjacart Demo Udyam",
       officialAddress: {
-        door: "",
-        premises: "",
-        town: "",
-        block: "",
-        road: "",
-        city: "",
-        district: "",
-        state: "",
-        pincode: "",
+        door: "Example Door",
+        premises: "Example Premises",
+        town: "Example town",
+        block: "Example block",
+        road: "Example road",
+        city: "Example city",
+        district: "KOLHAPUR",
+        state: "MAHARASHTRA",
+        pincode: "416003",
       },
       enterpriseStatus: {
-        dateOfIncorporation: "",
-        dateOfCommencement: "",
+        dateOfIncorporation: "2024-12-01",
       },
-      bankDetails: {
-        accountNumber: "",
-        ifscCode: "",
-      },
-      activityCategory: ActivityCategory.MANUFACTURING,
+      activityCategory: ActivityCategory.SERVICES,
       tradingServices: false,
-      nicCodes: ["asdsad", "asdddd"],
+      nicCodes: ["10409"],
       numberOfEmployees: {
-        male: 0,
+        male: 1,
         female: 0,
         others: 0,
       },
-      nameOnPan: "",
     });
-  const [error, setError] = useState();
+  const [error, setError] = useState<string>();
   const [openForm, setOpenForm] = useState(false);
   const [formContent, setFromContent] = useState<ReactNode>();
 
@@ -73,10 +69,15 @@ const AddDetailPage = () => {
   const verifyUdyamDetails = (
     udyamDetails: UdyamRegistrationDetailRequest
   ): boolean => {
+    if (!udyamDetails.activityCategory ){
+      setError("Baseic Details Empty")
+      return false
+    } 
     return true;
   };
 
   const handleSubmitDetails = async () => {
+    console.log(udyamDetails);
     if (udyamDetails && verifyUdyamDetails(udyamDetails)) {
       const addDetailsResp = await udyamAddDetails(udyamDetails);
       if (addDetailsResp.status == "SUCCESS") {
@@ -93,10 +94,17 @@ const AddDetailPage = () => {
             router.push({
               pathname: "/udyam/otp",
               query: {
-                type: OTPVerificationType.VERIFY_SESSION,
+                type: OTPVerificationType.CONFIRM_REGISTRATION,
                 redirectUrl: "/udyam/success",
               },
             });
+          }else if (
+            status.data.status ==
+            UdyamRegistrationStage.SESSION_DETAILS_ADDITION_FAILED_ACTIVE_SESSION
+          ) {
+            setError(status.data.error
+            ? status.data.error.message
+            : status.data.description,)
           }
         } else {
           console.log("Poller timed out");
@@ -184,7 +192,39 @@ const AddDetailPage = () => {
     setOpenForm(true);
   };
 
-  const formatAddress = (address: UdyamAddressDetail) => {
+  const handleNicCodesEdit = () => {
+    setFromContent(
+      <NicCodeForm
+        nicCodes={udyamDetails.nicCodes}
+        onSubmit={(updatedDetails) => {
+          setUdyamDetails((prevDetails) => ({
+            ...prevDetails,
+            nicCodes: updatedDetails.nicCodes,
+          }));
+          handleCloseForm();
+        }}
+      />
+    );
+    setOpenForm(true);
+  };
+
+  const handleUnitListEdit = () => {
+    setFromContent(
+      <UnitDetailForm
+        units={udyamDetails.units}
+        onSubmit={(updatedDetails) => {
+          setUdyamDetails((prevDetails) => ({
+            ...prevDetails,
+            units: updatedDetails.units,
+          }));
+          handleCloseForm();
+        }}
+      />
+    );
+    setOpenForm(true);
+  };
+
+  const formatAddress = (address: UdyamAddressDetail | UdyamUnitDetail) => {
     return `${address.door}, ${address.premises}, ${address.town}, ${address.block}, ${address.road}, ${address.city}, ${address.district}, ${address.state} - ${address.pincode}`;
   };
 
@@ -293,7 +333,7 @@ const AddDetailPage = () => {
                 </FormCard>
                 <FormCard
                   title="NIC Code List"
-                  onEditClick={handleBasicDetailsEdit}
+                  onEditClick={handleNicCodesEdit}
                 >
                   <div className="flex flex-wrap gap-4">
                     {udyamDetails?.nicCodes.map((nicCode) => (
@@ -305,21 +345,16 @@ const AddDetailPage = () => {
                       </Badge>
                     ))}
                   </div>
-                  {!udyamDetails?.nicCodes && (
-                    <Text size="sm" c="dimmed">
-                      Please add NIC Codes
-                    </Text>
-                  )}
                 </FormCard>
-                <FormCard
-                  title="Unit List"
-                  onEditClick={handleBasicDetailsEdit}
-                >
-                  {!udyamDetails?.nicCodes && (
-                    <Text size="sm" c="dimmed">
-                      No units added
-                    </Text>
-                  )}
+                <FormCard title="Unit List" onEditClick={handleUnitListEdit}>
+                    <div className="flex flex-col gap-2">
+                      {udyamDetails.units?.map((unit, index) => (
+                        <FormLabel
+                          label={`Unit # ${index}`}
+                          value={formatAddress(unit)}
+                        />
+                      ))}
+                    </div>
                 </FormCard>
               </div>
 
