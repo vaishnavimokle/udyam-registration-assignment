@@ -14,6 +14,7 @@ import { OTPVerificationType, UdyamRegistrationStage } from "@/constants/udyam";
 import { useRouter } from "next/router";
 import FormCard from "@/components/udyam/details/formCard";
 import BasicDetailForm from "@/components/udyam/details/basicForm";
+import EnterpriseDetailForm from "@/components/udyam/details/enterpriseForm";
 
 const AddDetailPage = () => {
   const [udyamDetails, setUdyamDetails] =
@@ -137,6 +138,30 @@ const AddDetailPage = () => {
     setOpenForm(true);
   };
 
+  const handleEnterpriseDetailsEdit = () => {
+    setFromContent(
+      <EnterpriseDetailForm
+        enterpriseName={udyamDetails.enterpriseName}
+        activityCategory={udyamDetails.activityCategory}
+        tradingServices={udyamDetails.tradingServices}
+        officialAddress={udyamDetails.officialAddress}
+        enterpriseStatus={udyamDetails.enterpriseStatus}
+        onSubmit={(updatedDetails)=> {
+          setUdyamDetails((prevDetails) => ({
+            ...prevDetails,
+            activityCategory: updatedDetails.activityCategory,
+            enterpriseName: updatedDetails.enterpriseName,
+            enterpriseStatus: updatedDetails.enterpriseStatus,
+            officialAddress: updatedDetails.officialAddress,
+            tradingServices: updatedDetails.tradingServices
+          }));
+          handleCloseForm();
+        }}
+      />
+    );
+    setOpenForm(true);
+  };
+
   return (
     <ScreenLayout title="Udyam Registration - Add Details">
       <div className="w-full flex flex-col justify-around p-8">
@@ -199,7 +224,7 @@ const AddDetailPage = () => {
                 </FormCard>
                 <FormCard
                   title="Enterprise Details"
-                  onEditClick={handleBasicDetailsEdit}
+                  onEditClick={handleEnterpriseDetailsEdit}
                 >
                   <Text size="sm" c="dimmed">
                     With Fjord Tours you can explore more of the magical fjord

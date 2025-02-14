@@ -27,7 +27,7 @@ export interface InitiateSessionData {
   sessionUrl: string;
 }
 
-interface UdyamAddressDetail {
+export interface UdyamAddressDetail {
   door: string;
   premises: string;
   town: string;
@@ -37,11 +37,9 @@ interface UdyamAddressDetail {
   district: string;
   state: string;
   pincode: string;
-  stateValue?: string;
-  districtValue?: string;
 }
 
-interface UdyamUnitDetail {
+export interface UdyamUnitDetail {
   unitName: string;
   door: string;
   premises: string;
@@ -52,21 +50,19 @@ interface UdyamUnitDetail {
   district: string;
   state: string;
   pincode: string;
-  stateValue?: string;
-  districtValue?: string;
 }
 
-interface UdyamEnterpriseStatus {
+export interface UdyamEnterpriseStatus {
   dateOfIncorporation: string;
   dateOfCommencement?: string;
 }
 
-interface UdyamBankDetail {
+export interface UdyamBankDetail {
   accountNumber: string;
   ifscCode: string;
 }
 
-interface UdyamEmployeeDetail {
+export interface UdyamEmployeeDetail {
   male: number;
   female: number;
   others: number;

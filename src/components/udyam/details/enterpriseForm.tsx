@@ -1,27 +1,20 @@
 import { ActivityCategory } from "@/constants/addDetails";
+import { stateDistMapping } from "@/constants/stateDistMapping";
+import {
+  UdyamAddressDetail,
+  UdyamEnterpriseStatus,
+} from "@/types/udyamRegistration";
 import { Button, TextInput, Select, Checkbox } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { isNotEmpty, useForm } from "@mantine/form";
+import { useState } from "react";
 
 type EnterpriseDetailField = {
   enterpriseName: string;
-  activityCategory: string;
+  activityCategory: ActivityCategory;
   tradingServices: boolean;
-  officialAddress: {
-    door: string;
-    premises: string;
-    town: string;
-    block: string;
-    road: string;
-    city: string;
-    district: string;
-    state: string;
-    pincode: string;
-  };
-  enterpriseStatus: {
-    dateOfIncorporation: string;
-    dateOfCommencement: string | undefined;
-  };
+  officialAddress: UdyamAddressDetail;
+  enterpriseStatus: UdyamEnterpriseStatus;
 };
 
 type EnterpriseDetailFormProps = EnterpriseDetailField & {
@@ -36,7 +29,7 @@ const EnterpriseDetailForm = ({
   enterpriseStatus,
   onSubmit,
 }: EnterpriseDetailFormProps) => {
-  const form = useForm({
+  const form = useForm<EnterpriseDetailField>({
     initialValues: {
       enterpriseName: enterpriseName,
       activityCategory: activityCategory,
@@ -66,6 +59,8 @@ const EnterpriseDetailForm = ({
     },
     validateInputOnBlur: true,
   });
+
+  const [selctedState, setSelectedState] = useState<string>("MAHARASHTRA");
 
   const handleSubmit = () => {
     if (!form.validate().hasErrors) {
@@ -191,23 +186,39 @@ const EnterpriseDetailForm = ({
         <Select
           required
           className="w-full"
-          label="District"
-          placeholder="District"
-          key={form.key("officialAddress.district")}
-          {...form.getInputProps("officialAddress.district")}
-          mr={16}
-          data={["KOLHAPUR"]}
-        />
-
-        <Select
-          required
-          className="w-full"
           label="State"
           placeholder="State"
           key={form.key("officialAddress.state")}
           mr={16}
-          data={["MAHARASHTRA"]}
-          {...form.getInputProps("officialAddress.state")}
+          value={selctedState}
+          searchable
+          data={Object.keys(stateDistMap)}
+          onChange={(state) => {
+            state && setSelectedState(state);
+          }}
+        />
+        <Select
+          required
+          className="w-full"
+          label="District"
+          placeholder="District"
+          key={form.key("officialAddress.district")}
+          mr={16}
+          defaultValue="KOLHAPUR"
+          searchable
+          data={stateDistMap[selctedState].map((obj: any) => ({
+            ...obj,
+            value: obj.district,
+          }))}
+          value={form.values.officialAddress.district}
+          onChange={(dist) =>{
+            const stateDist =
+              stateDistMapping.find((map) => map.district == dist) ||
+              stateDistMapping[0];
+            form.setFieldValue("officialAddress.district", stateDist.district);
+            form.setFieldValue("officialAddress.state", stateDist.state);
+          }
+          }
         />
 
         <TextInput
@@ -228,3 +239,11 @@ const EnterpriseDetailForm = ({
 };
 
 export default EnterpriseDetailForm;
+
+const stateDistMap = stateDistMapping.reduce((acc: any, curr) => {
+  if (!acc[curr.state]) {
+    acc[curr.state] = [];
+  }
+  acc[curr.state].push(curr);
+  return acc;
+}, {});

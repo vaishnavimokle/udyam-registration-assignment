@@ -35,7 +35,7 @@ const BasicDetailForm = ({
   speciallyAbled,
   onSubmit,
 }: BasicDetailFormProps) => {
-  const form = useForm({
+  const form = useForm<BasicDetailField>({
     initialValues: {
       pan: pan,
       nameOnPan: nameOnPan,
