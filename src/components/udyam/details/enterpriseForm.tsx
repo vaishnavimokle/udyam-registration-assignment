@@ -70,8 +70,8 @@ const EnterpriseDetailForm = ({
   };
 
   return (
-    <form>
-      <div className="flex justify-stretch mb-4">
+    <form className="w-full flex flex-col gap-4">
+      <div className="flex flex-col justify-stretch mb-4 gap-4">
         <TextInput
           required
           className="w-full"
@@ -93,7 +93,7 @@ const EnterpriseDetailForm = ({
 
         <Checkbox
           required
-          className="w-full pt-8"
+          className="w-full"
           label="Trading Services"
           {...form.getInputProps("tradingServices", {
             type: "checkbox",
@@ -108,7 +108,18 @@ const EnterpriseDetailForm = ({
           label="Date Of Incorporation"
           placeholder="Date Of Incorporation"
           key={form.key("enterpriseStatus.dateOfIncorporation")}
-          {...form.getInputProps("enterpriseStatus.dateOfIncorporation")}
+          valueFormat="YYYY-MM-DD"
+          value={
+            form.values.enterpriseStatus.dateOfIncorporation
+              ? new Date(form.values.enterpriseStatus.dateOfIncorporation)
+              : undefined
+          }
+          onChange={(date) =>
+            form.setFieldValue(
+              "enterpriseStatus.dateOfIncorporation",
+              date ? date.toISOString().split("T")[0] : ""
+            )
+          }
           mr={16}
         />
 
@@ -117,7 +128,18 @@ const EnterpriseDetailForm = ({
           label="Date Of Commencement"
           placeholder="Date Of Commencement"
           key={form.key("enterpriseStatus.dateOfCommencement")}
-          {...form.getInputProps("enterpriseStatus.dateOfCommencement")}
+          valueFormat="YYYY-MM-DD"
+          value={
+            form.values.enterpriseStatus.dateOfCommencement
+              ? new Date(form.values.enterpriseStatus.dateOfCommencement)
+              : undefined
+          }
+          onChange={(date) =>
+            form.setFieldValue(
+              "enterpriseStatus.dateOfCommencement",
+              date ? date.toISOString().split("T")[0] : ""
+            )
+          }
           mr={16}
         />
       </div>
@@ -211,14 +233,13 @@ const EnterpriseDetailForm = ({
             value: obj.district,
           }))}
           value={form.values.officialAddress.district}
-          onChange={(dist) =>{
+          onChange={(dist) => {
             const stateDist =
               stateDistMapping.find((map) => map.district == dist) ||
               stateDistMapping[0];
             form.setFieldValue("officialAddress.district", stateDist.district);
             form.setFieldValue("officialAddress.state", stateDist.state);
-          }
-          }
+          }}
         />
 
         <TextInput

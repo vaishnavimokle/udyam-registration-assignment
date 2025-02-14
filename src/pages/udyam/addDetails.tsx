@@ -6,7 +6,10 @@ import {
   SocialCategory,
   TypeOfOrganisation,
 } from "@/constants/addDetails";
-import { UdyamRegistrationDetailRequest } from "@/types/udyamRegistration";
+import {
+  UdyamAddressDetail,
+  UdyamRegistrationDetailRequest,
+} from "@/types/udyamRegistration";
 import { ReactNode, useState } from "react";
 import { udyamAddDetails } from "@/api/udyamRegistration";
 import pollForStatus from "@/services/udyam/statusPoller";
@@ -146,20 +149,24 @@ const AddDetailPage = () => {
         tradingServices={udyamDetails.tradingServices}
         officialAddress={udyamDetails.officialAddress}
         enterpriseStatus={udyamDetails.enterpriseStatus}
-        onSubmit={(updatedDetails)=> {
+        onSubmit={(updatedDetails) => {
           setUdyamDetails((prevDetails) => ({
             ...prevDetails,
             activityCategory: updatedDetails.activityCategory,
             enterpriseName: updatedDetails.enterpriseName,
             enterpriseStatus: updatedDetails.enterpriseStatus,
             officialAddress: updatedDetails.officialAddress,
-            tradingServices: updatedDetails.tradingServices
+            tradingServices: updatedDetails.tradingServices,
           }));
           handleCloseForm();
         }}
       />
     );
     setOpenForm(true);
+  };
+
+  const formatAddress = (address: UdyamAddressDetail) => {
+    return `${address.door}, ${address.premises}, ${address.town}, ${address.block}, ${address.road}, ${address.city}, ${address.district}, ${address.state} - ${address.pincode}`;
   };
 
   return (
@@ -173,64 +180,70 @@ const AddDetailPage = () => {
                   title="Basic Details"
                   onEditClick={handleBasicDetailsEdit}
                 >
-                  <div className="text-sm flex flex-col gap-1">
-                    <span>
-                      <span className="text-gray-600 text-xs">
-                        Name on PAN:
-                      </span>{" "}
-                      {udyamDetails.nameOnPan}
-                    </span>
-                    <span>
-                      <span className="text-gray-600 text-xs">PAN:</span>{" "}
-                      {udyamDetails.pan}
-                    </span>
-                    <span>
-                      <span className="text-gray-600 text-xs">
-                        Type of Org:
-                      </span>{" "}
-                      {udyamDetails.typeOfOrganisation}
-                    </span>
-                    <span>
-                      <span className="text-gray-600 text-xs">
-                        Date of Birth:
-                      </span>{" "}
-                      {udyamDetails.dob}
-                    </span>
-                    <span>
-                      <span className="text-gray-600 text-xs">Email:</span>{" "}
-                      {udyamDetails.email}
-                    </span>
-                    <span>
-                      <span className="text-gray-600 text-xs">Mobile:</span>{" "}
-                      {udyamDetails.mobile}
-                    </span>
-                    <span>
-                      <span className="text-gray-600 text-xs">
-                        Social Category:
-                      </span>{" "}
-                      {udyamDetails.socialCategory}
-                    </span>
-                    <span>
-                      <span className="text-gray-600 text-xs">Gender:</span>{" "}
-                      {udyamDetails.gender}
-                    </span>
-                    <span>
-                      <span className="text-gray-600 text-xs">
-                        Specially Abled:
-                      </span>{" "}
-                      {udyamDetails.speciallyAbled ? "Yes" : "No"}
-                    </span>
+                  <div className="text-sm flex flex-col gap-2">
+                    <FormLabel
+                      label="Name on PAN"
+                      value={udyamDetails.nameOnPan}
+                    />
+                    <div className="grid grid-cols-2">
+                      <FormLabel label="PAN" value={udyamDetails.pan} />
+                      <FormLabel
+                        label="Type of Org"
+                        value={udyamDetails.typeOfOrganisation}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2">
+                      <FormLabel
+                        label="Date of Birth"
+                        value={udyamDetails.dob}
+                      />
+                      <FormLabel label="Email" value={udyamDetails.email} />
+                      <FormLabel label="Mobile" value={udyamDetails.mobile} />
+                    </div>
+
+                    <div className="grid grid-cols-3">
+                      <FormLabel
+                        label="Social Category"
+                        value={udyamDetails.socialCategory}
+                      />
+                      <FormLabel label="Gender" value={udyamDetails.gender} />
+                      <FormLabel
+                        label="Specially Abled"
+                        value={udyamDetails.speciallyAbled ? "Yes" : "No"}
+                      />
+                    </div>
                   </div>
                 </FormCard>
                 <FormCard
                   title="Enterprise Details"
                   onEditClick={handleEnterpriseDetailsEdit}
                 >
-                  <Text size="sm" c="dimmed">
-                    With Fjord Tours you can explore more of the magical fjord
-                    landscapes with tours and activities on and around the
-                    fjords of Norway
-                  </Text>
+                  <div className="flex flex-col gap-2">
+                  <FormLabel
+                    label="Enterprise Name"
+                    value={udyamDetails.enterpriseName}
+                  />
+                  <FormLabel
+                    label="Activity Category"
+                    value={udyamDetails.activityCategory}
+                  />
+                  <FormLabel
+                    label="Trading Services"
+                    value={udyamDetails.tradingServices ? "Yes" : "No"}
+                  />
+                  <FormLabel
+                    label="Official Address"
+                    value={formatAddress(udyamDetails.officialAddress)}
+                  />
+                  <FormLabel
+                    label="Date of Incorporation"
+                    value={udyamDetails.enterpriseStatus.dateOfIncorporation}
+                  />
+                  <FormLabel
+                    label="Date of Commencement"
+                    value={udyamDetails.enterpriseStatus.dateOfCommencement}
+                  />
+                  </div>
                 </FormCard>
                 <FormCard
                   title="Additional Details"
@@ -296,6 +309,7 @@ const AddDetailPage = () => {
         title="Add Details"
         opened={openForm}
         onClose={handleCloseForm}
+        size="lg"
       >
         {formContent}
       </Modal>
@@ -304,3 +318,17 @@ const AddDetailPage = () => {
 };
 
 export default AddDetailPage;
+
+type FormLabelProsp = {
+  label: string;
+  value?: string;
+};
+
+const FormLabel = ({ label, value }: FormLabelProsp) => {
+  return (
+    <div className="text-sm flex flex-col">
+      <span className="text-gray-600 text-xs">{label}</span>
+      <span>{value || "N/A"}</span>
+    </div>
+  );
+};
