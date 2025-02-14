@@ -62,6 +62,7 @@ const AddDetailPage = () => {
     });
   const [error, setError] = useState<string>();
   const [openForm, setOpenForm] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [formContent, setFromContent] = useState<ReactNode>();
 
   const router = useRouter();
@@ -77,8 +78,9 @@ const AddDetailPage = () => {
   };
 
   const handleSubmitDetails = async () => {
-    console.log(udyamDetails);
+    setLoading(true)
     if (udyamDetails && verifyUdyamDetails(udyamDetails)) {
+      setError(undefined)
       const addDetailsResp = await udyamAddDetails(udyamDetails);
       if (addDetailsResp.status == "SUCCESS") {
         const status = await pollForStatus([
@@ -111,6 +113,7 @@ const AddDetailPage = () => {
         }
       }
     }
+    setLoading(false);
   };
 
   const handleCloseForm = () => {
@@ -360,7 +363,7 @@ const AddDetailPage = () => {
 
               <div className="w-full flex justify-around">
                 <div className="flex flex-col gap-4 w-full max-w-xs">
-                  <Button onClick={handleSubmitDetails} fullWidth>
+                  <Button onClick={handleSubmitDetails} fullWidth loading={loading}>
                     Submit
                   </Button>
                   {error && (

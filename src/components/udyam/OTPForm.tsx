@@ -4,22 +4,20 @@ import { PinInput, Button, Input } from "@mantine/core";
 type OTPFormProps = {
   onSubmit: (otp: string) => void;
   errorText?: string;
+  loading: boolean
 };
 
-const OTPForm = ({ onSubmit, errorText }: OTPFormProps) => {
+const OTPForm = ({ onSubmit, loading, errorText }: OTPFormProps) => {
   const [otp, setOtp] = useState<string>("");
   const [errorString, setErrorString] = useState<string | undefined>(errorText);
 
   useEffect(() => {setErrorString(errorText);}, [errorText]);
 
-  const [loading, setIsLoading] = useState(false);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     setErrorString(undefined);
-    setIsLoading(true)
     onSubmit(otp);
-    setIsLoading(false);
   };
 
   return (

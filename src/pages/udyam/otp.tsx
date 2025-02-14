@@ -11,6 +11,7 @@ export default function OTPPage() {
   const router = useRouter();
 
   const [errorText, setErrorText] = useState<string>();
+  const [loading, setLoading] = useState(false);
 
   const { type, redirectUrl } = router.query;
 
@@ -66,6 +67,7 @@ export default function OTPPage() {
   };
 
   const handleConfirmRegistrationStatus = (status: UdyamStatusResponse) => {
+    setLoading(true);
     if (
       status.data.status ==
       UdyamRegistrationStage.SESSION_CONFIRMATION_OTP_SUCCESSFUL
@@ -92,6 +94,8 @@ export default function OTPPage() {
         },
       });
     }
+
+    setLoading(false);
   };
 
   const onSubmit = async (otp: string) => {
@@ -117,7 +121,7 @@ export default function OTPPage() {
   return (
     <ScreenLayout title="Enter OTP" headerTitle="OTP Verification">
       <div className="flex flex-col items-center justify-center h-full">
-        <OTPForm onSubmit={onSubmit} errorText={errorText} />
+        <OTPForm loading={loading} onSubmit={onSubmit} errorText={errorText} />
       </div>
     </ScreenLayout>
   );
