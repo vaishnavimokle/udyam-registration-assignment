@@ -1,16 +1,10 @@
+import { UdyamBankDetail, UdyamEmployeeDetail } from "@/types/udyamRegistration";
 import { Button, TextInput, NumberInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 
 type ExtraDetailField = {
-  bankDetails: {
-    accountNumber: string | undefined;
-    ifscCode: string | undefined;
-  };
-  numberOfEmployees: {
-    male: number | undefined;
-    female: number | undefined;
-    others: number | undefined;
-  };
+  bankDetails?: UdyamBankDetail;
+  numberOfEmployees?: UdyamEmployeeDetail;
 };
 
 type ExtraDetailFormProps = ExtraDetailField & {

@@ -8,6 +8,8 @@ import {
 } from "@/constants/addDetails";
 import {
   UdyamAddressDetail,
+  UdyamBankDetail,
+  UdyamEmployeeDetail,
   UdyamRegistrationDetailRequest,
 } from "@/types/udyamRegistration";
 import { ReactNode, useState } from "react";
@@ -18,6 +20,7 @@ import { useRouter } from "next/router";
 import FormCard from "@/components/udyam/details/formCard";
 import BasicDetailForm from "@/components/udyam/details/basicForm";
 import EnterpriseDetailForm from "@/components/udyam/details/enterpriseForm";
+import ExtraDetailForm from "@/components/udyam/details/extraForm";
 
 const AddDetailPage = () => {
   const [udyamDetails, setUdyamDetails] =
@@ -42,8 +45,6 @@ const AddDetailPage = () => {
         district: "",
         state: "",
         pincode: "",
-        stateValue: "",
-        districtValue: "",
       },
       enterpriseStatus: {
         dateOfIncorporation: "",
@@ -165,6 +166,24 @@ const AddDetailPage = () => {
     setOpenForm(true);
   };
 
+  const handleExtraDetailsEdit = () => {
+    setFromContent(
+      <ExtraDetailForm
+        bankDetails={udyamDetails.bankDetails}
+        numberOfEmployees={udyamDetails.numberOfEmployees}
+        onSubmit={(updatedDetails) => {
+          setUdyamDetails((prevDetails) => ({
+            ...prevDetails,
+            bankDetails: updatedDetails.bankDetails,
+            numberOfEmployees: updatedDetails.numberOfEmployees,
+          }));
+          handleCloseForm();
+        }}
+      />
+    );
+    setOpenForm(true);
+  };
+
   const formatAddress = (address: UdyamAddressDetail) => {
     return `${address.door}, ${address.premises}, ${address.town}, ${address.block}, ${address.road}, ${address.city}, ${address.district}, ${address.state} - ${address.pincode}`;
   };
@@ -219,41 +238,58 @@ const AddDetailPage = () => {
                   onEditClick={handleEnterpriseDetailsEdit}
                 >
                   <div className="flex flex-col gap-2">
-                  <FormLabel
-                    label="Enterprise Name"
-                    value={udyamDetails.enterpriseName}
-                  />
-                  <FormLabel
-                    label="Activity Category"
-                    value={udyamDetails.activityCategory}
-                  />
-                  <FormLabel
-                    label="Trading Services"
-                    value={udyamDetails.tradingServices ? "Yes" : "No"}
-                  />
-                  <FormLabel
-                    label="Official Address"
-                    value={formatAddress(udyamDetails.officialAddress)}
-                  />
-                  <FormLabel
-                    label="Date of Incorporation"
-                    value={udyamDetails.enterpriseStatus.dateOfIncorporation}
-                  />
-                  <FormLabel
-                    label="Date of Commencement"
-                    value={udyamDetails.enterpriseStatus.dateOfCommencement}
-                  />
+                    <FormLabel
+                      label="Enterprise Name"
+                      value={udyamDetails.enterpriseName}
+                    />
+                    <FormLabel
+                      label="Activity Category"
+                      value={udyamDetails.activityCategory}
+                    />
+                    <FormLabel
+                      label="Trading Services"
+                      value={udyamDetails.tradingServices ? "Yes" : "No"}
+                    />
+                    <FormLabel
+                      label="Official Address"
+                      value={formatAddress(udyamDetails.officialAddress)}
+                    />
+                    <FormLabel
+                      label="Date of Incorporation"
+                      value={udyamDetails.enterpriseStatus.dateOfIncorporation}
+                    />
+                    <FormLabel
+                      label="Date of Commencement"
+                      value={udyamDetails.enterpriseStatus.dateOfCommencement}
+                    />
                   </div>
                 </FormCard>
                 <FormCard
                   title="Additional Details"
-                  onEditClick={handleBasicDetailsEdit}
+                  onEditClick={handleExtraDetailsEdit}
                 >
-                  <Text size="sm" c="dimmed">
-                    With Fjord Tours you can explore more of the magical fjord
-                    landscapes with tours and activities on and around the
-                    fjords of Norway
-                  </Text>
+                  <div className="flex flex-col gap-2">
+                    <FormLabel
+                      label="Account Number"
+                      value={udyamDetails.bankDetails?.accountNumber}
+                    />
+                    <FormLabel
+                      label="IFSC"
+                      value={udyamDetails.bankDetails?.ifscCode}
+                    />
+                    <FormLabel
+                      label="Male Employees"
+                      value={"" + udyamDetails.numberOfEmployees?.male}
+                    />
+                    <FormLabel
+                      label="Female Employees"
+                      value={"" + udyamDetails.numberOfEmployees?.female}
+                    />
+                    <FormLabel
+                      label="Other Employees"
+                      value={"" + udyamDetails.numberOfEmployees?.others}
+                    />
+                  </div>
                 </FormCard>
                 <FormCard
                   title="NIC Code List"
