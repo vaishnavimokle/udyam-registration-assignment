@@ -339,8 +339,9 @@ const AddDetailPage = () => {
                   onEditClick={handleNicCodesEdit}
                 >
                   <div className="flex flex-wrap gap-4">
-                    {udyamDetails?.nicCodes.map((nicCode) => (
+                    {udyamDetails?.nicCodes.map((nicCode, index) => (
                       <Badge
+                        key={index}
                         variant="gradient"
                         gradient={{ from: "#096ef2", to: "#0092ff", deg: 90 }}
                       >
@@ -350,20 +351,25 @@ const AddDetailPage = () => {
                   </div>
                 </FormCard>
                 <FormCard title="Unit List" onEditClick={handleUnitListEdit}>
-                    <div className="flex flex-col gap-2">
-                      {udyamDetails.units?.map((unit, index) => (
-                        <FormLabel
-                          label={`Unit # ${index}`}
-                          value={formatAddress(unit)}
-                        />
-                      ))}
-                    </div>
+                  <div className="flex flex-col gap-2">
+                    {udyamDetails.units?.map((unit, index) => (
+                      <FormLabel
+                        key={index}
+                        label={`Unit # ${index}`}
+                        value={formatAddress(unit)}
+                      />
+                    ))}
+                  </div>
                 </FormCard>
               </div>
 
               <div className="w-full flex justify-around">
                 <div className="flex flex-col gap-4 w-full max-w-xs">
-                  <Button onClick={handleSubmitDetails} fullWidth loading={loading}>
+                  <Button
+                    onClick={handleSubmitDetails}
+                    fullWidth
+                    loading={loading}
+                  >
                     Submit
                   </Button>
                   {error && (
@@ -371,6 +377,9 @@ const AddDetailPage = () => {
                       Error: {error}
                     </span>
                   )}
+                  <span className="text-wrap">
+                    Note: This process can take upto 5 mins
+                  </span>
                 </div>
               </div>
             </div>

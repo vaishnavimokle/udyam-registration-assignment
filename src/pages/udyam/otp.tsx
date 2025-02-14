@@ -44,6 +44,7 @@ export default function OTPPage() {
   };
 
   const handleVerifySessionStatus = (status: UdyamStatusResponse) => {
+    setLoading(true);
     if (
       status.data.status ==
       UdyamRegistrationStage.SESSION_VERIFICATION_OTP_SUCCESSFUL
@@ -53,7 +54,9 @@ export default function OTPPage() {
       status.data.status ==
       UdyamRegistrationStage.SESSION_VERIFICATION_OTP_FAILED_ACTIVE_SESSION
     ) {
-      setErrorText(status.data.description);
+      setErrorText(
+        status.data.error ? status.data.error.message : status.data.description
+      );
     } else {
       router.push({
         pathname: "/udyam/failure",
@@ -64,6 +67,7 @@ export default function OTPPage() {
         },
       });
     }
+    setLoading(false);
   };
 
   const handleConfirmRegistrationStatus = (status: UdyamStatusResponse) => {
@@ -83,7 +87,9 @@ export default function OTPPage() {
       status.data.status ==
       UdyamRegistrationStage.SESSION_CONFIRMATION_OTP_FAILED_ACTIVE_SESSION
     ) {
-      setErrorText(status.data.description);
+      setErrorText(
+        status.data.error ? status.data.error.message : status.data.description
+      );
     } else {
       router.push({
         pathname: "/udyam/failure",
