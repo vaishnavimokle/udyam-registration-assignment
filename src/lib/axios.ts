@@ -10,7 +10,7 @@ const defaultIntercepteor = (config: InternalAxiosRequestConfig) => {
 };
 
 export const axios = Axios.create({
-  baseURL: "https://in.qa.decentro.tech",
+  baseURL: "https://in.staging.decentro.tech",
   httpsAgent: new https.Agent({
     rejectUnauthorized: false,
   }),
