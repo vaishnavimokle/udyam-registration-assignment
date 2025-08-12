@@ -31,10 +31,10 @@ const AddDetailPage = () => {
       typeOfOrganisation: TypeOfOrganisation.OTHERS,
       pan: "BLBPC8598L",
       dob: "1935-11-11",
-      email: "avinash.chandra@decentro.tech",
-      mobile: "9356479551",
+      email: "vaishnavi.mokle@penbiz.tech",
+      mobile: "9392550881",
       socialCategory: SocialCategory.GENERAL,
-      gender: Gender.MALE,
+      gender: Gender.FEMALE,
       speciallyAbled: false,
       enterpriseName: "Ninjacart Demo Udyam",
       officialAddress: {

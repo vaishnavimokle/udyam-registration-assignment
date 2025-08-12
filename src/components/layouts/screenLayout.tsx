@@ -1,5 +1,4 @@
-import logo from "@/../public/decentro-logo.svg";
-import Image from "next/image";
+
 import { Title } from "@mantine/core";
 import useAuthStore from "@/stores/useAuthStore";
 import { ReactNode, useEffect } from "react";
@@ -61,19 +60,7 @@ const ScreenLayout = ({
         </header>
       )}
       <main className="flex-1 px-6">{children}</main>
-      <footer className="text-center p-6 align-middle flex items-center gap-1 justify-center sticky bottom-0 bg-white">
-        <div className="flex flex-col items-center gap-2">
-          <span className="flex items-center gap-1.5 text-xs">
-            Powered by
-            <Image
-              src={logo}
-              alt="Logo"
-              className="w-24 h-6 xzx ghgb       "
-              priority
-            />
-          </span>
-        </div>
-      </footer>
+      
     </div>
   );
 };

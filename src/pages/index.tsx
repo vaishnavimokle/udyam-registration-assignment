@@ -46,7 +46,7 @@ export default function Home() {
   };
 
   return (
-    <ScreenLayout title="Decentro Fabric Udyam Registration Demo">
+    <ScreenLayout title="Udyam Registration Demo">
       <div className="absolute inset-0 flex items-center justify-center bg-gray-50">
         <Card shadow="lg" padding="lg" radius="lg" className="w-full max-w-md">
           <form className="space-y-8">

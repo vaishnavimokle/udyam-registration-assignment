@@ -2,8 +2,8 @@ import { UdyamRegistrationStage } from "@/constants/udyam";
 import { ActivityCategory, Gender, SocialCategory, TypeOfOrganisation } from "@/constants/addDetails";
 
 export interface UdyamStatusResponse {
-  decentroTxnId: string;
-  initialDecentroTxnId: string;
+  dTxnId: string;
+  initialTxnId: string;
   status: string;
   message: string;
   data: UdyamStatusData;
